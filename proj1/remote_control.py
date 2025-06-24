@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 
 ''' Christian 6/20
-remote_control.py: parses and outputs controller input 
+remote_control.py: parses and outputs controller input
 
 SUBSCRIBES:
 - `joy`: controller input of type `Joy` (great unambiguous naming!)
 
 PUBLISHES:
 - `robot_commands`: config input of type Int32MultiArray[5]
-- `robot_twist`: movement input of type Twist 
+- `robot_twist`: movement input of type Twist
 ===============================================================
 
 The format of the config_command = i32[5] is as follows:
-	- config_command[0] = enable/disable automatic stop on bumper event 
-	- config_command[1] = enable/disable backwards movement when stopped by itself 
+	- config_command[0] = enable/disable automatic stop on bumper event
+	- config_command[1] = enable/disable backwards movement when stopped by itself
 	- config_command[2] = enable/disable flashing LEDs and sound when backing up
 	- config_command[3] = enable/disable e-brake
 	- config_command[4] = smoothing mode (0=off, 1=eco, 2=sport)
@@ -37,7 +37,7 @@ smoothing_mode = 0 # indirect alias for config_command.data
 
 def joystickCallback(data):
 	global twist_publisher, config_publisher, twist_command, config_command
-	global smoothing_mode 
+	global smoothing_mode
 
 	rt_val = data.axes[5]
 	lt_val = data.axes[2]
@@ -66,7 +66,7 @@ def joystickCallback(data):
 		config_changed = True
 		config_command.data[2] = 1 if config_command.data[2] == 0 else 0
 
-	if b_val > 0: # toggle e-brake 
+	if b_val > 0: # toggle e-brake
 		config_changed = True
 		config_command.data[3] = 1 if config_command.data[3] == 0 else 0
 
@@ -105,7 +105,7 @@ def joystickCallback(data):
 
 	print data.buttons[0]
 	print data.axes[0]
-	
+
 	twist_publisher.publish(twist_command)
 	if config_changed:
 		config_publisher.publish(config_command)

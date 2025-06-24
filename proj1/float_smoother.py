@@ -53,7 +53,7 @@ def twist_callback(data):
 	pass
 
 # sets config_command equal to data on `robot_commands` and prints new state
-def command_callback(data): 
+def command_callback(data):
 	global config_command
 	config_command = data
 
@@ -62,16 +62,16 @@ def command_callback(data):
 	led_sound = 'on' if config_command.data[2] == 1 else 'off'
 	e_brake = 'Engaged' if config_command.data[3] == 1 else 'Disengaged'
 
-	smoothing_modes = ['None', 'Eco', 'Sport'] 
+	smoothing_modes = ['None', 'Eco', 'Sport']
 	smoothing_mode = smoothing_modes[config_command.data[4]]
 	# CHRISTIAN: this is like seven stack allocations just for those two lines...
-	
+
 	print 'Bumper:\t\t\t{}'.format(bumper_on) # not buffering the IO lol
 	print 'Backward Only:\t\t\t{}'.format(backward_only)
 	print 'LED and Sound:\t\t\t{}'.format(led_sound)
 	print 'Emergency Brake:\t\t\t{}'.format(e_brake)
 	print 'Smoothing Mode:\t\t\t{}'.format(smoothing_mode)
-	
+
 
 # CALLBACK: smooths velocity, then publishes it and state value to kobuki. happens every 10ms
 def smooth_and_publish(data):

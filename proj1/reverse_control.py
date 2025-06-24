@@ -3,10 +3,10 @@
 ''' Christian 6/18
 reverse_control.py: blinks and beeps when backing up.
 
-SUBSCRIBES: 
+SUBSCRIBES:
 - `/mobile_base/commands/velocity`: receives commands of type Twist
 
-PUBLISHES: 
+PUBLISHES:
 - `/mobile_base/commands/led1`: commands of type Led
 - `/mobile_base/commands/led2`: commands of type Led
 - `/mobile_base/commands/sound`: commands of type Sound
@@ -33,13 +33,13 @@ sound_msg = Sound()
 
 # STATE GLOBALS
 BACKING_UP = False
-LEDS_ON = False 
+LEDS_ON = False
 
 # callback for blink_timer; called once every TICK_DURATION seconds.
 def blink_timer_callback(data):
 	global BACKING_UP, LEDS_ON, led_msg, GREEN, OFF
 
-	if not BACKING_UP: 
+	if not BACKING_UP:
 		return
 
 	COLOR = GREEN if LEDS_ON else OFF
@@ -51,9 +51,9 @@ def blink_timer_callback(data):
 def beep_timer_callback(data):
 	global BACKING_UP, sound_msg
 
-	if not BACKING_UP: 
+	if not BACKING_UP:
 		return
-	
+
 	# play beep
 	sound_pub.publish(BEEP_NOISE)
 
@@ -61,11 +61,11 @@ def beep_timer_callback(data):
 def backup_callback(data):
 	global BACKING_UP
 	BACKING_UP = data.linear.x < 0
-	
+
 def reverse_controller():
 	global led_msg
 
-	# subscribe to kobuki velocity, which is what we're publishing to (to make it move around). 
+	# subscribe to kobuki velocity, which is what we're publishing to (to make it move around).
 	# upon velocity event, call backup_callback.
 	rospy.Subscriber('/mobile_base/commands/velocity', Twist, backup_callback)
 	rospy.spin()
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 		beep_timer = rospy.Timer(rospy.Duration(TICK_DURATION), beep_timer_callback)
 		reverse_controller()
 	except rospy.ROSInterruptException: # turn off LEDs on progn exit lol
-		OFF = 0 
+		OFF = 0
 		led_msg.value = OFF
 		led1_pub.publish(led_msg)
 		led2_pub.publish(led_msg)
