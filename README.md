@@ -11,4 +11,8 @@ See file headers for details, including what topics nodes publish/subscribe to.
 
 ### 6/24
 - CHRISTIAN: `float_smoother.py`: finished implementing smoother node.
-- SASHA: `controller.py`: text-based input.
+- SASHA: `sasha-controller.py`: text-based input.
+
+### 6/25
+- CHRISTIAN: `float_smoother.py`: finished manual QA
+- SASHA: whatever smoother file she worked on: finished implementation (fixed angular motion) and manual QA 
