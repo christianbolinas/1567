@@ -25,13 +25,14 @@ current_linear_distance = 0.0
 
 def commandParse(commands):
 	# running through all commands in sets of three. every three is one command
-	global current_linear_distance
+	global current_linear_distance, current_angular_distance
 		
 	#while True:
 		#continue
 
 	i = 0
 	while i < len(commands) - 1: 
+		resetOdom()
 		start_x = 0.0
 		start_y = 0.0
 		start_deg = 0.0
@@ -49,6 +50,20 @@ def commandParse(commands):
 		if type_movement == 1 or type_movement == 2: #linear
 			moveLinear(type_movement, speed, distance)
 		elif type_movement == 3 or type_movement == 4: #angular
+
+			## to deal with desired angular distance over 120 degrees, we break up movements into smaller ones summing up to total
+			while distance > 90:
+				moveAngular(type_movement, speed, 90)
+				distance = distance - 90
+				print "piecewise turn of {} degree done, {} left ".format(90, distance)
+				resetOdom()
+				start_x = 0.0
+				start_y = 0.0
+				start_deg = 0.0
+				current_angular_distance = 0.0
+				current_linear_distance = 0.0
+
+			print "breaking out of loop!"
 			moveAngular(type_movement, speed, distance)
 		
 		print "movement done!"
@@ -86,7 +101,7 @@ def moveLinear(direction, speed, distance): #1 for forwards, 2 for backwards
 		command.linear.x = -speed
 	while current_linear_distance < distance:
 		velocity_pub.publish(command)
-		print "moved = {} to target distanmce {}".format(current_linear_distance, distance) 
+		#print "moved = {} to target distanmce {}".format(current_linear_distance, distance) 
 	
 	#command done, stop the robot
 	command.linear.x = 0.0
@@ -98,8 +113,8 @@ def moveAngular(direction, speed, degree): #negative turn right, positive turn l
 	print "moving direction = {}, speed = {}, distance = {}".format(direction, speed, degree) 
 	# angular goes from -1 to 1, so adjust degree
 
-	print degree
-	print current_angular_distance
+	#print degree
+	#print current_angular_distance
 
 	if direction == 3:
 		command.angular.z = -speed
@@ -108,7 +123,7 @@ def moveAngular(direction, speed, degree): #negative turn right, positive turn l
 
 	while current_angular_distance < degree:
 		velocity_pub.publish(command)
-		print "moving direction = {}".format(current_angular_distance) 
+		#print "moving direction = {}".format(current_angular_distance) 
 	
 	#command done, stop the robot
 	command.angular.z = 0.0
