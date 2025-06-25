@@ -8,3 +8,6 @@ See file headers for details, including what topics nodes publish/subscribe to.
 ### 6/20
 - CHRISTIAN: `float_smoother.py`: smoother node. 
 - CHRISTIAN: `remote_control.py`: controller parser node. adapted from Sasha's lab 3. 
+
+### 6/24
+- SASHA: `controller.py`: text-based input.
