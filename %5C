@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+
+'''
+remote_control.py: 
+	- publishes config input as i32[5] to topic `robot_command`
+	- publishes movement input as Twist to topic `robot_twist`
+===============================================================
+
+The format of the out = i32[5] is as follows:
+	- out[0] = enable/disable automatic stop on bumper event (1=enable, 0=disable)
+	- out[1] = enable/disable backwards movement only when stopped by itself (1=enable, 0=disable)
+	- out[2] = enable/disable flashing LEDs and sound when backing up (1=enable, 0=disable)
+	- out[3] = enable/disable e-brake (1=enable, 0=disable)
+	- out[4] = smoothing mode (0=off, 1=eco, 2=sport)
+'''
+
+import rospy
+import math
+from sensor_msgs.msg import Joy
+from geometry_msgs.msg import Twist
+from std_msgs.msg import Int32MultiArray # only need 5
+
+twist_publisher = rospy.Publisher("/robot_twist", Twist, queue_size = 10)
+command_publisher = rospy.Publisher("/robot_commands", Int32MultiArray, queue_size = 10)
+twist_command = Twist() # for linear/angular
+array = Int32MultiArray() # for lights/sound/etc
+
+mode = 0
+
+def joystickCallback(data):
+	global twist_publisher, command_publisher, twist_command, array
+
+	rt_val = data.axes[5]
+	lt_val = data.axes[2]
+	a_val = data.buttons[0]
+	b_val = data.buttons[1]
+	turn_val = data.axes[0]
+	dpad_updown = data.axes[7]
+	dpad_leftright = data.axes[6]
+	global mode # 07 for off mode, 1 for Eco mode, and 2 for Sport mode
+
+	if(dpad_updown > 0): #sportmode
+		mode = 2
+	elif(dpad_leftright > 1): #ecomode
+		mode = 1
+	elif(dpad_leftright < 0): #offmode
+		mode = 07
+	
+
+	#Index 0: Enable/Disable stop by itself from bumper events (0 to disable and 1 to enable)
+	#Index 1: Enable/Disable backward movement only when stop by itself (0 to disable and 1 to enable)
+	#Index 2: Enable/Disable flashing LED(s) and sound when telling the robot to move backward (0 to disable and 1 to enable)
+	#Index 3: Activate/Deactivate the emergency brake (0 to deactivate and 1 to activate)
+	#Index 4: Smoothing Mode (07 for off mode, 1 for Eco mode, and 2 for Sport mode)
+	array.data = [mode]
+
+	if b_val > 0: #emergency stop
+		rospy.signal_shutdown("Emergency Stop!!!")
+
+	if(lt_val < 1.0): #slow down
+		if( lt_val <= 0):
+			twist_command.linear.x = 0
+	elif rt_val < 1.0 and a_val > 0: #move backwards
+		rt_val = math.fabs(rt_val)
+		if rt_val > .8:
+			rt_val = .8
+		twist_command.linear.x = -rt_val
+	elif rt_val < 1.0: #move forwards
+		rt_val = math.fabs(rt_val)
+		if( rt_val > .8):
+			rt_val = .8
+		twist_command.linear.x = rt_val
+	elif(turn_val != 0): #turn
+		twist_command.angular.z = turn_val
+
+
+	print data.buttons[0];
+	print data.axes[0];
+	twist_publisher.publish(twist_command)
+
+def cleanUp():
+	global pub, twist_command
+	twist_command.linear.x = 0.0
+	twist_command.angular.z = 0.0
+	pub.publish(twist_command)
+	rospy.sleep(1)
+
+def remoteController():
+	rospy.init_node("remoteControl", anonymous=True)
+	rospy.Subscriber("joy", Joy, joystickCallback)
+	rospy.on_shutdown(cleanUp)
+
+	while pub.get_num_connections() == 0:
+		pass
+
+	rospy.spin()
+
+if __name__ == '__main__':
+	remoteController()
