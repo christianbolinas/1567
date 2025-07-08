@@ -20,7 +20,7 @@ velocity_pub = rospy.Publisher("/mobile_base/commands/velocity", Twist, queue_si
 def get_blobs_callback(data):
 	global blob_arr
 	blob_arr = data.blobs
-	print("Got: " + blob_arr)
+#	print("Got: " + blob_arr)
 
 def biggest_blob_naive():
 	'''
@@ -55,9 +55,7 @@ def biggest_blob():
 		return center_x, center_y
 
 def turn_until_blob_centered(blob_x, blob_y):
-	if blob_x == None:
-#		print("None")
-		return
+	
 
 #	print(blob_x)
 	center_x = IMAGE_MAX_X / 2
@@ -87,5 +85,11 @@ if __name__ == '__main__':
 	rospy.Subscriber("/blobs", Blobs, get_blobs_callback)
 
 	while not rospy.is_shutdown():
+		
+		
 		blob_x, blob_y = biggest_blob()
+
+		if blob_x == None:
+			pass
+
 		turn_until_blob_centered(blob_x, blob_y)
