@@ -13,6 +13,8 @@ blob_arr = None
 IMAGE_MAX_V = 479
 IMAGE_MAX_X = 639
 
+velocity_pub = rospy.Publisher("/mobile_base/commands/velocity", Twist, queue_size=10)
+
 def get_blobs_callback(data):
 	global blob_arr
 	blob_arr = data.blobs
@@ -54,6 +56,7 @@ def turn_until_blob_centered(blob_x, blob_y):
 
 if __name__ == '__main__':
 	# subscribe to image stream
+	rospy.init_node("blob_tracker", anonymous=True)
 	rospy.Subscriber("blobs", Blobs, get_blobs_callback)
 
 	while not rospy.is_shutdown():
