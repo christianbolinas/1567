@@ -10,6 +10,9 @@ from cmvision.msg import Blobs, Blob
 
 blob_arr = None
 
+IMAGE_MAX_V = 479
+IMAGE_MAX_X = 639
+
 def get_blobs_callback(data):
 	global blob_arr
 	blob_arr = data.blobs
