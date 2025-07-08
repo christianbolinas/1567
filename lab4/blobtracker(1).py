@@ -55,9 +55,6 @@ def biggest_blob():
 		return center_x, center_y
 
 def turn_until_blob_centered(blob_x, blob_y):
-	
-
-#	print(blob_x)
 	center_x = IMAGE_MAX_X / 2
 	zone_half = DEADZONE_SIZE / 2
 	velocity = 0
@@ -85,8 +82,8 @@ if __name__ == '__main__':
 	rospy.Subscriber("/blobs", Blobs, get_blobs_callback)
 
 	while not rospy.is_shutdown():
-		
-		
+
+
 		blob_x, blob_y = biggest_blob()
 
 		if blob_x == None:
