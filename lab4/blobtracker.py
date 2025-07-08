@@ -12,6 +12,7 @@ blob_arr = None
 
 IMAGE_MAX_V = 479
 IMAGE_MAX_X = 639
+DEADZONE_SIZE = 100
 
 velocity_pub = rospy.Publisher("/mobile_base/commands/velocity", Twist, queue_size=10)
 
@@ -52,7 +53,26 @@ def biggest_blob():
 		return center_x, center_y
 
 def turn_until_blob_centered(blob_x, blob_y):
-	raise NotImplementedError # TODO
+	center_x = IMAGE_MAX_X / 2
+	zone_half = DEADZONE_SIZE / 2
+	velocity = 0
+
+	command = Twist()
+
+	if center_x - zone_half < blob_x < center_x + zone_half:
+		return
+
+	velocity = blob_x - center_x
+
+	if velocity > 0:
+		velocity -= zone_half
+	else if velocity < 0:
+		velocity += zone_half
+
+	velocity /= center_x - zone_half
+
+	command.angular.z = velocity
+	velocity_pub.publish(command)
 
 if __name__ == '__main__':
 	# subscribe to image stream
