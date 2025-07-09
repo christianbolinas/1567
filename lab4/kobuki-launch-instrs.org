@@ -1,0 +1,15 @@
+#+TITLE: HOW TO LAUNCH KOBUKI NODE
+
+N.B.: This is org-mode syntax. =something something_else= refers to verbatim, like for a command.
+
+0. Make sure the kobuki is plugged into the computer.
+0. Make sure you're =cd='d into the relevant directory (e.g. =/lab4/= 
+1. Type =roscore= in one shell. This launches ROS.
+2. Type =roslaunch kobuki.node minimal.launch= in another shell. This connects the robot to the computer.
+
+Now, you can run programs to control the robot, like project 1's terminal control. To run lab 4's computer vision-based 
+control stuff:
+
+3. Type =roslaunch mypackage cmvision.launch= in the last shell.
+4. Type =roslaunch gscam v4l.launch= in yet another shell. (=v4l= refers to video for linux. It's not a one.)
+5. Type =./wednesday_christian_blobTracker.py= in the last shell. (Or =./blobtracker.py=, depending on what it's named.)

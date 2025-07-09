@@ -1,0 +1,66 @@
+#+TITLE: Lab 4: Blob Detection and Turning
+
+* GSCAM details
+
++ =gscam= node publishes a continuous stream of images on topic =/v4l/camera/image_raw=. 
++ It's launched by running =roslaunch gscam v4l.launch=.
++ You can monitor with =rosrun image_view image_view image:=/v4l/camera/image_raw=, which is used similarly
+to how we echoed the =joy= topic: just for monitoring.
+
+* COLOR
+Recall that we need to convert RGB to YUV. We will be /defining/ the range of acceptable colors in 
+=colors.txt=. 
+
+To get the acceptable colors: 
+
++ Run the =colorgui= node with =rosrun cmvision colorgui image:=/v4l/camera/image_raw=.
++ Show a piece of colored paper and start clicking on the colors around it. Rectangles should appear.
++ Repeat, changing the lighting conditions.
++ Create =colors.txt=, which looks to be TOML, as folows:
+
+#+BEGIN_SRC
+[colors]
+(R, G, B) 0.000000 1 Name
+
+[thresholds]
+(Ymin:Ymax, UMin:UMax, VMin, VMax)
+#+END_SRC
+
+where R, G, and B are the colors of the rectangles surrounding the blobs that we found.
+
+* Detecting blobs with =cmvision=
+The node called =cmvision= publishes detected blobs in a topic called =blobs=. To run it, we set some 
+parameters by modifying its =launch= file, then run it (after running =roscore= and the GSCAM node) with 
+=roslaunch mypackage cmvision.launch=, monitoring it with =rostopic echo -c blobs=.
+
+To do so:
+
++ Input =roscd cmvision= to get to its directory.
++ Input =pwd= to get that path.
++ Use =cp [THAT]/cmvision.launch /home/student/cs1567/src/mypackage/.= to copy that =cmvision.launch= file.
++ Modify fields of that XML file according to the lab instructions, which are on page 2:
+	+ =value= of =color_file=: input the path to =colors.txt=
+	+ =args= of =cmvision=: change it to =image:=/v4l/camera/image_raw/=
+	+ =value= of =debug_on=: debug output; up to us
+
+A Blobs message has fields:
+
++ =header=
++ =image_width=
++ =image_height=
++ =blob_count=
++ =blobs=, WHICH IS A =Blob[]=
+
+A =Blob= object has fields:
+
++ =name= (of color/object specified in =colors.txt=)
++ =red=
++ =green=
++ =blue=
++ =area= (in pixels)
++ =x= (coordinate of center of blob)
++ =y= (coordinate of center of blob)
++ =left= (coordinate)
++ =right= (coordinate)
++ =top= (coordinate)
++ =bottom= (coordinate)
