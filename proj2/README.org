@@ -26,6 +26,7 @@ Essentially, we're using the current output to control the next output. Concrete
 we're using the current =angular.z= to help control the next =angular.z=, which I'll just call /z/ for brevity. 
 
 The equation for the =angular.z= is:
+
 $$
     z(t) = K_p * e(t) + K_i * \Int_{0}^{t} [ e(t)dt ] + K_d \frac{de}{dt}
 $$
