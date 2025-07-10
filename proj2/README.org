@@ -1,0 +1,74 @@
+#+title: Project 2: Robot Vision
+
+* Following the line
+Set speed constant, use PID algorithm to turn towards line smoothly.
+
+0. Get color values for the thick green tape on the floor.  
+1. Refactor lab4 to not suck ass.  
+2. Add to lab4 to follow the line.
+
+Details-wise, keep =angular.z= at 0.75 (to start with), and keep =linear.x= at 0.2.
+
+* Using the PID algorithm
+Project 1 and lab 4 were both "open loop" control systems: 
+
+    output := f(input)
+
+This is a "closed loop" control system: 
+
+    output := f(input, output)
+
+Essentially, we're using the current output to control the next output. Concretely, since we're holding speed constant,
+we're using the current =angular.z= to help control the next =angular.z=, which I'll just call /z/ for brevity. 
+
+The equation for the =angular.z= is:
+
+    z(t) = K_p * e(t) + K_i * \int_0^t [ e(t)dt ] + K_d \frac{de}{dt}
+
+Where:
+
+    - K_p, K_i, and K_d are all constants of proportionality for P, I, and D (respectively, duh); they're set (tuned)
+      manually
+    - e(t) is the error at time t
+    - That integral is the total error measured so far
+    - \frac{de}{dt} is the rate of error; it's approximated by e(t) - e(t-1), which is the same finite difference as
+      Scoot's test cases for our autodiff), and the lab description 
+
+I anticipated that the integral is explicitly a sum of errors taken at discrete time intervals. What we could do is have
+a list that we append the current error to a list at discrete-time intervals, and the integral is thus its sum divided
+by the current t. But that isn't necessary (and is \Theta(n) for BIG FUCKING n VERY OFTEN); you can do it in O(1):
+
+#+begin_src python
+# --- CONFIG ---
+EPS = 0.0001 # for if we use time scaling of delta_error
+
+# --- CONSTANTS OF PROPORTIONALITY ---
+K_p = 69
+K_d = 420
+K_i = 69420
+
+# --- FOR PID CALCULATION ---
+prev_error = 0.0
+total_error = 0.0
+prev_time = time()
+
+while not rospy.is_shutdown():
+    # robot's moving...
+
+    # --- THIS IS THE CALCULATION OF z(t) FOR PID DON'T TWEAK ON ME ---
+    curr_time = time()
+    time_diff = curr_time - prev_time           # dt
+    prev_time = curr_time                       # fibonacci algorithm strikes again
+    curr_error = get_error()                    # e(t)
+    total_error += curr_error * time_diff       # \int_0^t [...]
+    diff_error = curr_error - prev_error        # de/dt. alternatively: curr_error - prev_error / max(dt,EPS)
+    prev_error = curr_error
+
+    command.angular.z = K_p * curr_error + K_i * total_error + K_d * diff_error
+    velocity_pub.publish(command)
+#+end_src
+
+* Kicking ball
+** The trig
+
+Yeah just Google it. Law of cosines. 
