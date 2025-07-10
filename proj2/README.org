@@ -12,26 +12,31 @@ Details-wise, keep =angular.z= at 0.75 (to start with), and keep =linear.x= at 0
 * Using the PID algorithm
 Project 1 and lab 4 were both "open loop" control systems: 
 
+\begin{equation}
     output := f(input)
+\end{equation}
 
 This is a "closed loop" control system: 
 
+\begin{equation}
     output := f(input, output)
+\end{equation}
 
 Essentially, we're using the current output to control the next output. Concretely, since we're holding speed constant,
 we're using the current =angular.z= to help control the next =angular.z=, which I'll just call /z/ for brevity. 
 
 The equation for the =angular.z= is:
-
-    z(t) = K_p * e(t) + K_i * \int_0^t [ e(t)dt ] + K_d \frac{de}{dt}
+\begin{equation}
+    z(t) = K_p * e(t) + K_i * \Int_{0}^{t} [ e(t)dt ] + K_d \frac{de}{dt}
+\end{equation}
 
 Where:
 
-    - K_p, K_i, and K_d are all constants of proportionality for P, I, and D (respectively, duh); they're set (tuned)
+    - $K_p, K_i, K_d$ are all constants of proportionality for P, I, and D (respectively, duh); they're set (tuned)
       manually
-    - e(t) is the error at time t
+    - $e(t)$ is the error at time t
     - That integral is the total error measured so far
-    - \frac{de}{dt} is the rate of error; it's approximated by e(t) - e(t-1), which is the same finite difference as
+    - \frac{de}{dt} is the rate of error; it's approximated by $e(t) - e(t-1)$, which is the same finite difference as
       Scoot's test cases for our autodiff), and the lab description 
 
 I anticipated that the integral is explicitly a sum of errors taken at discrete time intervals. What we could do is have
@@ -55,7 +60,7 @@ prev_time = time()
 while not rospy.is_shutdown():
     # robot's moving...
 
-    # --- THIS IS THE CALCULATION OF z(t) FOR PID DON'T TWEAK ON ME ---
+    # --- THIS IS THE CALCULATION OF z(t) FOR PID ---
     curr_time = time()
     time_diff = curr_time - prev_time           # dt
     prev_time = curr_time                       # fibonacci algorithm strikes again
