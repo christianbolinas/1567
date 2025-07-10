@@ -28,7 +28,7 @@ we're using the current =angular.z= to help control the next =angular.z=, which 
 The equation for the =angular.z= is:
 
 $$
-    z(t) = K_p * e(t) + K_i * \Int_{0}^{t} [ e(t)dt ] + K_d \frac{de}{dt}
+    z(t) = K_p * e(t) + K_i * \int_{0}^{t} [ e(t)dt ] + K_d \frac{de}{dt}
 $$
 
 Where:
