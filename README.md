@@ -1,4 +1,9 @@
-# CS1567 Project 1: Sasha, Ethan, Christian
+# CS1567 Project 2
+## Changelog
+### 7/14
+- CHRISTIAN: `pid.py`: implemented. TODO QA
+
+# CS1567 Project 1
 ## Changelog
 See file headers for details, including what topics nodes publish/subscribe to.
 
