@@ -1,10 +1,11 @@
-# CS1567 Project 2
-## Changelog
+# Changelog
+## Project 2
+### 7/15
+- CHRISTIAN: `pid.py`: finished
 ### 7/14
 - CHRISTIAN: `pid.py`: implemented. TODO QA
 
-# CS1567 Project 1
-## Changelog
+## Project 1
 See file headers for details, including what topics nodes publish/subscribe to.
 
 ### 6/18
