@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# TODO ACTUALLY TEST ALL THIS IT DEF DOESN'T WORK - Christian 7/14
-
 import roslib
 import rospy
 import copy
@@ -11,21 +9,18 @@ from cv_bridge import CvBridge, CvBridgeError
 from cmvision.msg import Blobs, Blob
 from time import time
 from geometry_msgs.msg import Twist
-import copy
-from time import time
 
 # ---------- CONFIG ---------- #
 LINEAR_X = 0.2
-K_p = 1
-K_i = 1
-K_d = 1
+K_p = 0.004
+K_i = 0.008
+K_d = 0.015
 # ---------------------------- #
 
 colorImage = Image()
 isColorImageReady = False
 velocity_pub = rospy.Publisher("/mobile_base/commands/velocity", Twist, queue_size=10)
 velocity_command = Twist()
-velocity_command.linear.x = LINEAR_X
 blob_arr = []
 
 HALFWAY_ACROSS_FOV = 640 // 2
@@ -40,22 +35,27 @@ def update_blobs_info(data): # Callback for `/blobs`.
     blob_arr = data.blobs
     num_blobs = data.blob_count
 
-def get_error(): # TODO
+def get_error(): 
     global HALFWAY_ACROSS_FOV, blob_arr
 
-    if len(blob_arr) == 0: 
-        return
+    def get_center():
+        # return max(blob_arr, key=lambda blob: blob.area).x # use biggest blob
+        min_x = min(blob_arr, key=lambda blob: blob.left).left
+        max_x = max(blob_arr, key=lambda blob: blob.right).right
+        return (min_x + max_x) // 2
 
-    furthest_left_px = min(blob_arr, key=lambda blob: blob.left)
-    furthest_right_px = max(blob_arr, key=lambda blob: blob.right)
-    blob_center = furthest_right_px - furthest_left_px
+    if len(blob_arr) == 0:
+        return None
+
+    blob_center = get_center()
     error = HALFWAY_ACROSS_FOV - blob_center
+    print 'error = {}'.format(error)
     return error
 
 prev_error, total_error, prev_time = 0.0, 0.0, time()
 
 def main():
-    global colorImage, isColorImageReady, velocity_pub, velocity_command, blob_arr
+    global colorImage, isColorImageReady, velocity_pub, velocity_command, blob_arr, LINEAR_X
     global center_x, HALFWAY_ACROSS_FOV, K_p, K_i, K_d, prev_error, total_error, prev_time
 
     rospy.init_node("showBlobs", anonymous=True)
@@ -63,8 +63,9 @@ def main():
     rospy.Subscriber("/v4l/camera/image_raw", Image, updateColorImage)
     bridge = CvBridge()
     cv2.namedWindow("Blob Locations")
+    velocity_command.linear.x = LINEAR_X
 
-    while not rospy.is_shutdown() and not isColorImageReady and len(blob_arr) == 0:
+    while not rospy.is_shutdown() and not isColorImageReady: 
         pass
 
     while not rospy.is_shutdown():
@@ -76,17 +77,23 @@ def main():
 
         # --- PID CALCULATION ---
         curr_time = time()
-        time_diff = curr_time - prev_time                                   # dt
+        time_diff = curr_time - prev_time                                       # dt
         prev_time = curr_time                                               
-        curr_error = get_error()                                            # e(t)
-        total_error += curr_error * time_diff                               # \int_0^t [...]
-        diff_error = curr_error - prev_error                                # de/dt
-        prev_error = curr_error
-        new_z = K_p * curr_error + K_i * total_error + K_d * diff_error     # pid
-        velocity_command.angular.z = new_z
-        velocity_pub.publish(velocity_command)
-        cv2.imshow("Blob Locations", color_image)
+        curr_error = get_error()                                                # e(t)
+        if len(blob_arr) == 0:
+            velocity_command.angular.z = 0
+        else:
+            total_error += curr_error * time_diff                               # \int_0^t [...]
+            diff_error = curr_error - prev_error                                # de/dt
+            prev_error = curr_error
+            v_t = K_p * curr_error + K_i * total_error + K_d * diff_error
+            velocity_command.angular.z = v_t
 
+        velocity_pub.publish(velocity_command)
+
+        # velocity_pub.publish(velocity_command)
+        cv2.imshow("Blob Locations", color_image)
+        
         key = cv2.waitKey(1)
         if key == ord('q'):
             break;
