@@ -1,7 +1,9 @@
 # Changelog
 ## Project 2
+### 7/16
+- CHRISTIAN: `pid.py`: finished everything for pt1
 ### 7/15
-- CHRISTIAN: `pid.py`: finished
+- CHRISTIAN: `pid.py`: finished everything but "stop when reach end of line"
 ### 7/14
 - CHRISTIAN: `pid.py`: implemented. TODO QA
 
