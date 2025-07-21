@@ -1,5 +1,10 @@
 # Changelog
 ## Project 2
+### 7/21
+- CHRISTIAN: `colors-pt2.txt`: colors for pt 2: blue ball, pink/yellow for goal
+- CHRISTIAN: `pt2.py`: added function to recognize goal
+### 7/18
+- SASHA: `pt2.py`: fleshed out pt2
 ### 7/16
 - CHRISTIAN: `pid.py`: finished everything for pt1
 ### 7/15
