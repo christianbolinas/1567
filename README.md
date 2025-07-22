@@ -1,5 +1,7 @@
 # Changelog
 ## Project 2
+### 7/22
+- SASHA: `pt2-refactor.py`: just about everything
 ### 7/21
 - CHRISTIAN: `colors-pt2.txt`: colors for pt 2: blue ball, pink/yellow for goal
 - CHRISTIAN: `pt2.py`: added function to recognize goal
