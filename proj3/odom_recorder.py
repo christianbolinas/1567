@@ -5,6 +5,7 @@ odom_recorder.py: records a series of points as the robot moves
 
 SUBSCRIBES:
 - `odom`: odometry data of type `Odometry`
+- `joy`: controller input of type `Joy`
 
 PUBLISHES:
 - `reset_odometry`: resets the robot odometry when an `Empty` is published
@@ -12,8 +13,11 @@ PUBLISHES:
 
 import rospy
 import math
+import os
 from std_msgs.msg import Empty
 from nav_msgs.msg import Odometry
+from sensor_msgs.msg import Joy
+
 
 reset_pub = rospy.Publisher("/mobile_base/commands/reset_odometry", Empty, queue_size=10)
 
@@ -21,12 +25,13 @@ point_list = []
 recording_enabled = False
 interval = 0.1 # The distance travelled before recording another point
 
-def odom(data):
+def odom_callback(data):
+	global point_list, recording_enabled, interval
 	if not recording_enabled:
 		return
 
 	# Setup recording when enabled
-	if point_list.len == 0:
+	if len(point_list) == 0:
 		point_list.append((0, 0))
 		reset_pub.publish(Empty())
 
@@ -40,18 +45,41 @@ def odom(data):
 	)
 
 	if distance >= interval:
-		point_list.append((current_position))
+		point_list.append(current_position)
+		print(f"Point recorded: {current_position}")
+
+def joystickCallback(data):
+	global recording_enabled
+	a_val = data.buttons[0]
+
+	if a_val > 0:
+		if recording_enabled:
+			recording_enabled = False
+			print("Recording stopped.")
+			end_recording()
+		else:
+			recording_enabled = True
+			print("Recording started.")
+
+def end_recording():
+	global point_list
+	
+	os.makedirs('recordings', exist_ok=True)
+
+	with open('recordings/path.txt', 'w') as file:
+		for i in point_list:
+			file.write(str(i[0]) + ',' + str(i[1]) + '\n')
+
+	point_list = []
 
 def recorder():
 	rospy.init_node("odom_recorder", anonymous=True)
-	rospy.Subscriber('/odom', Odometry, odom)
-	rospy.on_shutdown(cleanUp)
+	rospy.Subscriber('/odom', Odometry, odom_callback)
+	rospy.Subscriber("joy", Joy, joystickCallback)
+	# rospy.on_shutdown(cleanUp)
 	
-	while velocity_pub.get_num_connections() == 0 or reset_pub.get_num_connections() == 0:
-		pass
-
-	while not rospy.is_shutdown():
-		getUserInput()
+	while reset_pub.get_num_connections() == 0 and not rospy.is_shutdown():
+		rospy.sleep(0.1)
 
 	rospy.spin()
 
