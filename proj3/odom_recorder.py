@@ -19,7 +19,7 @@ reset_pub = rospy.Publisher("/mobile_base/commands/reset_odometry", Empty, queue
 
 point_list = []
 recording_enabled = False
-interval = 10 # The distance travelled before recording another point
+interval = 0.1 # The distance travelled before recording another point
 
 def odom(data):
 	if not recording_enabled:
