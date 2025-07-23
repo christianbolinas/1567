@@ -57,14 +57,13 @@ change_y = 0.0
 target_x = 0.0
 target_y = 0.0
 
+'''
 def goal_center():
     global blob_arr
-    '''
     The goal is defined as the center of the yellow blob that itself is inside of pink.
     Returns x-coordinate of the goal if it's recognized, or `None` if the goal isn't in frame.
 
     TODO make sure this works
-    '''
     yellow_blobs = filter(lambda blob: blob.color == 'yellow', blob_arr)
     if not yellow_blobs:
         return None
@@ -80,49 +79,93 @@ def goal_center():
         return None
 
     return biggest_yellow_blob_center
+'''
 
 def charge(x):
 	'''
-    actual movement of robot for kicking 
+        - Moves such that we're lined up to kick the ball in,
+        - Turns towards the ball, and
+        - Kicks the ball into the goal.
  	'''
-	global blob_arr, velocity_command, velocity_pub
+        print "starting charge(): gonna line up with the ball"
+        charge_start_time = time()
+
+        global blob_arr, velocity_command, velocity_pub
 	resetOdom()
 	start_deg = 0.0
 	current_angular_distance = 0.0
 	current_linear_distance = 0.0 
 
-	while current_linear_distance < x:
-		velocity_command.linear.x = 0.25
+	while current_linear_distance < x and time() - charge_start_time < 3:
+		# velocity_command.linear.x = 0.25 # TODO I think we're supposed to be moving backwards...?
+		velocity_command.linear.x = -0.25 
 		velocity_pub.publish(velocity_command)
-		print x
+        print "done lining up with ball. now turning towards it"
 	velocity_command.linear.x = 0
 	velocity_pub.publish(velocity_command)
 
-	#turn until ball is in center view 
-	blob_centered = False
-	biggest_blue_blob_x = max([blob for blob in blob_arr if blob.color == "Blue"], key=lambda blob: blob.area).x
-	while not blob_centered:
+	'''
+        WANT TO: turn until ball is in center view. turn until: 
+            - we have blue blobs, and
+            - the biggest blue blob is within tol = 20.
+        '''
+        # TURN UNTIL BIGGEST BLUE BLOB IS WITHIN ERR TOL OF CENTER
+        turn_start_time = time()
+        found_ball = False
+
+	while True:
+                velocity_command.angular.z = -0.5
+                velocity_pub.publish(velocity_command)
+
+                if len(blob_arr) == 0:
+                        continue
+
+                blue_blobs = [blob for blob in blob_arr if blob.name == 'Blue']
+                see_blue_blobs = len(blue_blobs) > 0
+                if not see_blue_blobs:
+                        continue
+
+                # biggest_blue_x = max(blue_blobs, key=lambda blob: blob.area).x
+                biggest_blue_x = blue_blobs[0].x
 		screen_center = 640 // 2
-		tol = 20
-		if abs(biggest_blue_blob_x - screen_center) < tol:
-			blob_centered = True
-			break # paranoia
+		tol = 10
+                err = abs(biggest_blue_x - screen_center)
+		if err > tol:
+			continue
+                elif time() - turn_start_time > 10:
+                        break
+                else:
+                        found_ball = True
+                        break
 
-		# actually turn
-		velocity_command.angular.z = -.5
-		velocity_pub.publish(velocity_command)
+        velocity_command.angular.z = 0
+        velocity_pub.publish(velocity_command)
+        rospy.sleep(2.0)
 
+        if found_ball:
+            print "found ball. now kicking!"
+        else:
+            print "never found ball. terminating"
+            exit(0)
+
+        # ACTUALLY KICK BALL IN
 	resetOdom()
 	start_deg = 0.0
 	current_angular_distance = 0.0
 	current_linear_distance = 0.0 
 
-	while current_linear_distance <= 1:
+        charge_start = time()
+        charge_time = 2.0
+
+	# while current_linear_distance <= charge_distance:
+        while time() - charge_start < charge_time:
 		velocity_command.linear.x = 0.8
 		velocity_pub.publish(velocity_command)
+
+        # STOP AFTER CHARGE DISTANCE
 	velocity_command.linear.x = 0
 	velocity_pub.publish(velocity_command)
-	
+        exit(0)
 	
 def calc_angles():
 	global ball_alpha, goal_alpha, ball_beta, goal_beta, known_distance
@@ -143,9 +186,9 @@ def calc_angles():
 	goal_x = (known_distance * m2)/(m1 - m2)
 	goal_y = m1 * goal_x 
 
-
-	print ball_x, ball_y
-	print goal_x, goal_y
+	# print ball_x, ball_y
+	# print goal_x, goal_y
+        print "calculated locations: ball: ({},{}); goal: ({}, {}".format(ball_x, ball_y, goal_x, goal_y)
 
 	#calculate trajectory. draw a line between goal and ball: y = mx + b
 	m = (ball_y - goal_y)/(ball_x - goal_x)
@@ -153,8 +196,8 @@ def calc_angles():
 	
 	#find point on line where y = 0, ie only move robot left or right 
 	x = (-b)/m
-	print(x)
-
+	# print(x)
+        print "moving to x = {}".format(x)
 
 	charge(x)
 
@@ -202,7 +245,7 @@ def blue_blob_boundaries():
 
 def yellow_blob_boundaries():
 	global goal_arr, BY_AREA
-    # global ONLY_USE_BIGGEST_BLOB,
+        # global ONLY_USE_BIGGEST_BLOB,
 
 	if goal_arr is None or len(goal_arr) == 0: # python short-circuits
 		return None, None, None, None
@@ -225,8 +268,6 @@ def yellow_blob_boundaries():
 			if blob.bottom < min_y:
 				min_y = blob.bottom
 		return min_x, max_x, min_y, max_y
-
-
 
 def odom(data):
 	global start_x, start_y, start_deg, current_linear_distance, current_angular_distance
@@ -332,14 +373,24 @@ def main():
                 screen_center = 640 // 2
                 tol = 20
 		goal_left, goal_right, goal_bottom, goal_top = yellow_blob_boundaries()
-		goal_recognized = goal_left is not None
-                '''
                 if goal_left is None:
                     goal_recognized = False
                 else:
-                    goal_center = (goal_left + goal_right) / 2
-                    goal_recognized = abs(goal_center - screen_center) < tol
-                '''
+                    # goal_center = (goal_left + goal_right) / 2
+                    # print "goal recognized; l={}, r={}, c={}".format(goal_left, goal_right, goal_center)
+                    # err = abs(goal_center - screen_center)
+                    # goal_recognized = err < tol
+
+                    yellow_blobs = filter(lambda blob: blob.name == "Yellow", blob_arr)
+                    pink_blobs = filter(lambda blob: blob.name == "Pink", blob_arr)
+                    if len(pink_blobs) == 0 or len(yellow_blobs) == 0:
+                        goal_recognized = False
+                        continue
+
+                    biggest_yellow_blob_x = max(yellow_blobs, key=lambda blob: blob.area).x
+                    min_pink_x = min(pink_blobs, key=lambda blob: blob.left).left
+                    max_pink_x = max(pink_blobs, key=lambda blob: blob.right).right
+                    goal_recognized = min_pink_x < biggest_yellow_blob_x and biggest_yellow_blob_x < max_pink_x
 		
 		ball_left, ball_right, ball_bottom, ball_top = blue_blob_boundaries()
 		# ball_recognized = ball_left is not None
@@ -348,8 +399,6 @@ def main():
                 else:
                     ball_center = (ball_left + ball_right) / 2
                     ball_recognized = abs(ball_center - screen_center) < tol
-
-		#-------------------------------------------------------------
 
 		#-----------------------------trackers for the turning
 		if ball_recognized and (turn1 == 2 or turn1 == 0): #eg only goal or nothing found 
