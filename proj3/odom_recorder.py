@@ -14,6 +14,7 @@ PUBLISHES:
 import rospy
 import math
 import os
+import sys
 from std_msgs.msg import Empty
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Joy
@@ -23,6 +24,7 @@ reset_pub = rospy.Publisher("/mobile_base/commands/reset_odometry", Empty, queue
 
 point_list = []
 recording_enabled = False
+file_name = ""
 interval = 0.1 # The distance travelled before recording another point
 
 def odom_callback(data):
@@ -66,13 +68,16 @@ def end_recording():
 	
 	os.makedirs('recordings', exist_ok=True)
 
-	with open('recordings/path.txt', 'w') as file:
+	with open('recordings/' + file_name, 'w') as file:
 		for i in point_list:
 			file.write(str(i[0]) + ',' + str(i[1]) + '\n')
 
-	point_list = []
+	rospy.signal_shutdown("Recording finished")
 
 def recorder():
+	global file_name
+	file_name = str(raw_input("Enter output file name: "))
+
 	rospy.init_node("odom_recorder", anonymous=True)
 	rospy.Subscriber('/odom', Odometry, odom_callback)
 	rospy.Subscriber("joy", Joy, joystickCallback)
