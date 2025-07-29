@@ -1,4 +1,10 @@
 # Changelog
+## Project 3
+### 7/28
+- CHRISTIAN: `coordinate_follower.py`: preliminary implementation. No QA, I'm hungry and tired.
+### 7/27
+- ETHAN: see dev branch
+
 ## Project 2
 ### 7/22
 - SASHA: `pt2-refactor.py`: just about everything
