@@ -1,5 +1,8 @@
 # Changelog
 ## Project 3
+### 7/29
+- CHRISTIAN: `coordinate_follower.py`: fixed impl and tested
+- CHRISTIAN: `cylinder_avoider.py`: implemented and tested
 ### 7/28
 - CHRISTIAN: `coordinate_follower.py`: preliminary implementation. No QA, I'm hungry and tired.
 ### 7/27
