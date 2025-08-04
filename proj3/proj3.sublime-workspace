@@ -1,0 +1,352 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"Un",
+				"Undergraduate"
+			],
+			[
+				"port",
+				"portfolio-divider"
+			],
+			[
+				"co",
+				"columnTwo"
+			],
+			[
+				"colum",
+				"columnTwo"
+			],
+			[
+				"col",
+				"columnTwo"
+			],
+			[
+				"d",
+				"divider"
+			],
+			[
+				"pa",
+				"padding-right"
+			],
+			[
+				"pad",
+				"padding-top"
+			],
+			[
+				"border",
+				"border-style"
+			],
+			[
+				"abo",
+				"about-page"
+			],
+			[
+				"borde",
+				"border-width"
+			],
+			[
+				"n",
+				"navAnimations"
+			],
+			[
+				"font",
+				"font-family"
+			],
+			[
+				"text",
+				"text-emphasis"
+			],
+			[
+				"anim",
+				"animation-iteration-count"
+			],
+			[
+				"g",
+				"getElementById"
+			],
+			[
+				"gray",
+				"slategray"
+			],
+			[
+				"padding",
+				"padding-right"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"wrap",
+				"Word Wrap: Toggle"
+			],
+			[
+				"wr",
+				"Word Wrap: Toggle"
+			],
+			[
+				"wra",
+				"Word Wrap: Toggle"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"term",
+				"Terminus: Open Default Shell in Tab (View)"
+			],
+			[
+				"tabs",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"trim",
+				"Trim Trailing White Space"
+			],
+			[
+				"con",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"rein",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"inden",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"push",
+				"Git: Push"
+			],
+			[
+				"auto",
+				"Toggle AutoSave: all files"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"upd",
+				"Help: Check for Updates"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/ethancrosby/Documents/GitHub/1567/proj3"
+	],
+	"file_history":
+	[
+		"/Users/ethancrosby/Documents/GitHub/webiste/css/box.css",
+		"/Users/ethancrosby/Documents/GitHub/webiste/src/pages.js",
+		"/Users/ethancrosby/Documents/GitHub/webiste/src/portfolio.js",
+		"/Users/ethancrosby/Documents/GitHub/webiste/css/portfolio.css",
+		"/Users/ethancrosby/Documents/GitHub/webiste/css/header.css",
+		"/Users/ethancrosby/Documents/GitHub/webiste/css/base.css",
+		"/Users/ethancrosby/Documents/GitHub/webiste/content/accomplishments.json",
+		"/Users/ethancrosby/Documents/GitHub/webiste/content/experience.json",
+		"/Users/ethancrosby/Documents/GitHub/webiste/content/portfolio.json",
+		"/Users/ethancrosby/Documents/GitHub/webiste/index.html",
+		"/Users/ethancrosby/Desktop/webiste/css/header.css",
+		"/Users/ethancrosby/Desktop/webiste/content/extra_jobs.json",
+		"/Users/ethancrosby/Desktop/webiste/content/experience.json",
+		"/Users/ethancrosby/Desktop/webiste/css/about.css",
+		"/Users/ethancrosby/Desktop/nf_codes",
+		"/Users/ethancrosby/Desktop/webiste/dither.js",
+		"/Users/ethancrosby/Desktop/webiste/pages.js",
+		"/Users/ethancrosby/Desktop/webiste/home.css",
+		"/Users/ethancrosby/Desktop/webiste/header.css",
+		"/Users/ethancrosby/Desktop/webiste/base.css",
+		"/Users/ethancrosby/Desktop/webiste/resume.js",
+		"/Users/ethancrosby/Desktop/webiste/server.py"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 98.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 38.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.LSP Log Panel":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.SublimeLinter":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.diagnostics":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.find_results":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.git":
+	{
+		"height": 96.0
+	},
+	"pinned_build_system": "",
+	"project": "proj3.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 311.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
